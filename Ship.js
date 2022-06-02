@@ -1,16 +1,20 @@
-const Ship = (length) => {
-  let hits = 0;
+const ship = (length) => {
+  let hits = new Array(length).fill(false);
   
-  const hit = () => {
-    hits++;
+  const hit = (square) => {
+    hits[square] = true;
   }
 
   const isSunk = () => {
-    if(hits >= length) return true;
+    let i = 0;
+    while(i < length) {
+      if(!hits[i]) return false;
+      i++;
+    }
 
-    return false;
+    return true;
   }
-  return {length, hit, isSunk}
+  return { length, hit, isSunk }
 }
 
-export { Ship }
+export { ship }
