@@ -1,6 +1,5 @@
 const ship = (length) => {
   let hits = new Array(length).fill(false);
-  const shipLength = length;
   
   const hit = (square) => {
     if(hits[square]) return false;
@@ -10,14 +9,14 @@ const ship = (length) => {
 
   const isSunk = () => {
     let i = 0;
-    while(i < shipLength) {
+    while(i < length) {
       if(!hits[i]) return false;
       i++;
     }
 
     return true;
   }
-  return { hit, isSunk }
+  return { length, hit, isSunk }
 }
 
 export { ship }
