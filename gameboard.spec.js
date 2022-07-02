@@ -14,6 +14,7 @@ describe('Create Gameboard object', () => {
   boardTest[0][0] = three;
   boardTest[1][0] = three;
   boardTest[3][0] = three;
+
   test('Ship placed correctly at (0,0), (1,0), (2,0)', () => {
     expect(board.board).toEqual(boardTest);
   }); 
@@ -25,6 +26,20 @@ describe('Create Gameboard object', () => {
   boardTest[0][4] = four;
 
   test('Vertical ship placed correctly at 0,1 0,2 0,3 0,4', () => {
+    expect(board.board).toEqual(boardTest);
+  });
+
+  board.receiveAttack(0, 0);
+  boardTest[0][0] = 'hit';
+
+  test('receiveAttack marks a ship hit as "hit"', () => {
+    expect(board.board).toEqual(boardTest);
+  });
+
+  board.receiveAttack(1, 1);
+  boardTest[1][1] = 'miss';
+
+  test('receiveAttack marks a missed attacked as "miss"', () => {
     expect(board.board).toEqual(boardTest);
   });
 });
