@@ -1,5 +1,9 @@
 const ship = (length) => {
   let hits = new Array(length).fill(false);
+
+  const getLength = () => {
+    return length
+  }
   
   const hit = (square) => {
     if(hits[square]) return false;
@@ -16,7 +20,7 @@ const ship = (length) => {
 
     return true;
   }
-  return { length, hit, isSunk }
+  return { getLength, hit, isSunk }
 }
 
 export { ship }
