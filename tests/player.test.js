@@ -1,5 +1,5 @@
-import { player } from './Player.js';
-import { Gameboard } from './Gameboard.js';
+import { player } from '../src/Player.js';
+import { Gameboard } from '../src/Gameboard.js';
 
 describe('create Player object', () => {
   const board = Gameboard(10);

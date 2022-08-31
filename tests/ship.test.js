@@ -1,4 +1,4 @@
-import { ship } from './Ship.js';
+import { ship } from '../src/Ship.js';
 
 const five = ship(5);
 
