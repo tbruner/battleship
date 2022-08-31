@@ -1,13 +1,5 @@
 import { player } from './Player.js';
 
-const render = () => {
-
-} 
-
-const renderBoard = (Gameboard) => {
-
-}
-
 const newGame = () => {
   // create p1 player and computer player objects
   let p1 = player();
@@ -17,34 +9,40 @@ const newGame = () => {
   const p1Board = document.getElementById('player')
   const computerBoard = document.getElementById('computer')
 
-  const grid = document.createElement('div')
-  grid.classList.add('grid')
+  let table = document.createElement('table')
+  let tbody = document.createElement('tbody')
 
-  let size = p1.getGameBoard().getBoard().length;
+  let size = p1.getGameBoard().getBoard().length
 
   for(let i=0; i<size; i++) {
+    let row = document.createElement('tr')
     for(let j=0; j<size; j++) {
-      let cell = document.createElement('div')
-      cell.classList.add('cell')
-
+      let cell = document.createElement('td')
+      cell.dataset.y = i+1
+      cell.dataset.x = String.fromCharCode(65+j)
+      row.appendChild(cell)
+      if(i===0) {
+        let xAxisLabel = document.createElement('div')
+        xAxisLabel.classList.add('x-axis-label')
+        xAxisLabel.innerText = cell.dataset.x
+        cell.append(xAxisLabel)
+      }
       if(j===0) {
-        cell.innerText = i
-        cell.classList.add('board-labels')
+        let yAxisLabel = document.createElement('div')
+        yAxisLabel.classList.add('y-axis-label')
+        yAxisLabel.innerText = `${cell.dataset.y}`
+        cell.append(yAxisLabel)
       }
-  
-      else if(i===0){
-        cell.innerText = String.fromCharCode(64+j)
-        cell.classList.add('board-labels')
-      }
-
-      grid.appendChild(cell)
     }
+    tbody.appendChild(row)
   }
 
-  p1Board.appendChild(grid)
-  let clone = grid.cloneNode(true)
-  computerBoard.appendChild(clone)
+  table.appendChild(tbody)
 
+  p1Board.appendChild(table)
+
+  let clone = table.cloneNode(true)
+  computerBoard.appendChild(clone)
 
   p1.getGameBoard();
   computer.getGameBoard();

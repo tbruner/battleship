@@ -4,13 +4,37 @@ body {
   margin: 0;
 }
 
-.grid {
+#content {
   display: grid;
-  grid-template-columns: repeat(10, 50px);
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  justify-items: center;
+}
+
+table {
+  border-collapse: collapse;
   margin: 50px;
 }
 
-.grid .cell {
-  border: 3px solid black;
-  height: 50px;
+tbody td {
+  border: 2px solid black;
+  width: 40px;
+  height: 40px;
+  position: relative;
 }
+
+.x-axis-label {
+  top: -30px;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+}
+
+.y-axis-label {
+  top: 10px;
+  left: -35px;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+}
+
