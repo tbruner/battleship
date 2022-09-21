@@ -15,7 +15,7 @@ describe('create Player object', () => {
   });
 
   test('AI attack sends valid attack to board', () => {
-    expect(p1.AiAttack(p2)).toBe(undefined);
+    expect(p1.AiAttack()).toBe(true);
     const receiveAttackSpy = jest.spyOn(p1.getGameBoard(), 'receiveAttack');
 
     p1.AiAttack();
