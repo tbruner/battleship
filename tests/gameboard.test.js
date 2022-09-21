@@ -11,7 +11,7 @@ describe('Create Gameboard object', () => {
   });
   
   function mockPlaceShip() {
-    board.placeShip(0, 0, true, three);
+    board.placeShip(0, 0, true, 3);
     return board.getBoard()
   }
   
@@ -27,7 +27,7 @@ describe('Create Gameboard object', () => {
   const four = ship(4);
 
   test('Vertical ship placed correctly at 0,1 0,2 0,3 0,4', () => {
-    board.placeShip(0, 1, false, four);
+    board.placeShip(0, 1, false, 4);
     boardTest[0][1] = [four, 0];
     boardTest[0][2] = [four, 1];
     boardTest[0][3] = [four, 2];

@@ -16,7 +16,7 @@ table {
   margin: 50px;
 }
 
-tbody td {
+td {
   border: 2px solid black;
   width: 40px;
   height: 40px;
@@ -38,3 +38,23 @@ tbody td {
   position: absolute;
 }
 
+.ship-cell {
+  background-color: hsl(240, 85%, 60%);
+  z-index: -1;
+}
+
+.sunk-cell {
+  background-color: aqua;
+  z-index: -1;
+}
+
+.miss-cell {
+  background-color: crimson;
+  z-index: -1;
+}
+
+.unchecked:hover {
+  background-color: hsl(130, 40%, 60%);
+  z-index: -1;
+  cursor: pointer;
+}

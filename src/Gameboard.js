@@ -1,3 +1,5 @@
+import { ship } from './Ship.js';
+
 const Gameboard = (size) => {
   // initialize empty board with empty cells to false
   const board = [...Array(size)].map(() => Array(size).fill(false));
@@ -10,11 +12,12 @@ const Gameboard = (size) => {
     return board
   }
 
-  const placeShip = (x, y, orient, ship) => {
-    ships.push(ship);
-    for(let i=0; i<ship.getLength(); i++) {
-      if(orient) board[x+i][y] = [ship, i];
-      else board[x][y+i] = [ship, i];
+  const placeShip = (x, y, orient, length) => {
+    let playerShip = ship(length);
+    ships.push(playerShip);
+    for(let i=0; i<playerShip.getLength(); i++) {
+      if(orient) board[x+i][y] = [playerShip, i];
+      else board[x][y+i] = [playerShip, i];
     }
   }
 
