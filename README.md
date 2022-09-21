@@ -14,5 +14,4 @@ Jest.
 
 ## Usage
 
-Once finished I'll have a live link for this project, and instructions on how to run this on your own machine if 
-you so wish.
+To play this Battleship game visit this [link](https://tbruner.github.io/battleship).
