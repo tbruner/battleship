@@ -7,22 +7,22 @@ const player = () => {
     return board;
   }
 
-  const sendAttack = (opp, x, y) => {
-    return opp.getGameBoard().receiveAttack(x, y);
+  const receiveAttack = (x, y) => {
+    return board.receiveAttack(x, y);
   }
 
-  const AiAttack = (opp) => {
+  const AiAttack = () => {
     let valid = false;
     do {
       let x = Math.floor(Math.random() * 10);
       let y = Math.floor(Math.random() * 10);
-      valid = opp.getGameBoard().receiveAttack(x, y);
+      valid = board.receiveAttack(x, y);
     } while(!valid);
     return valid;
   }
 
   // get user input
-  return { getGameBoard, sendAttack, AiAttack };
+  return { getGameBoard, receiveAttack, AiAttack };
 }
 
 export { player };
