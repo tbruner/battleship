@@ -1,11 +1,12 @@
 import { player } from './Player.js';
 
-const renderBoard = (player, playerObj, state) => {
+const renderBoard = (player, playerObj, oppObj, state) => {
   // get Gameboard to render to screen
   const board = document.getElementById(player)
   // clear board
   board.innerHTML = ''
-  const playerBoard = playerObj.getBoard()
+  const playerGB = playerObj.getGameBoard()
+  const playerBoard = playerGB.getBoard()
 
   let table = document.createElement('table')
   let tbody = document.createElement('tbody')
@@ -35,7 +36,7 @@ const renderBoard = (player, playerObj, state) => {
         // currently using same name used for html id, maybe add cpu flag in gameboard/player functions to use?
         if(player === 'computer' && state === 'playing') {
           cell.classList.add('unchecked')
-          cell.addEventListener('click', function() { attack(i, j, playerObj, player) })
+          cell.addEventListener('click', function() { attack(i, j, playerObj, oppObj, player) })
         } 
         else {
           cell.classList.add('ship-cell')
@@ -44,7 +45,7 @@ const renderBoard = (player, playerObj, state) => {
       else {
         if(player === 'computer' && state === 'playing') {
           cell.classList.add('unchecked')
-          cell.addEventListener('click', function() { attack(i, j, playerObj, player) })
+          cell.addEventListener('click', function() { attack(i, j, playerObj, oppObj, player) })
         }
       }
 
@@ -100,8 +101,8 @@ const newGame = () => {
   computerBoard.placeShip(8, 4, false, 1)
   computerBoard.placeShip(8, 8, true, 2)
 
-  renderBoard('user', userBoard, 'playing')
-  renderBoard('computer', computerBoard, 'playing')
+  renderBoard('user', user, computer, 'playing')
+  renderBoard('computer', computer, user, 'playing')
   
   // Use event listener to get valid user input and run computer turn
   // using a timeout checking each time for a 'GAME OVER' where a 
@@ -109,13 +110,22 @@ const newGame = () => {
   // display start screen
 }
 
-const attack = (x, y, playerObj, player) => {
+const attack = (x, y, compObj, userObj, player) => {
   let state = 'playing'
-  if(playerObj.receiveAttack(x, y) === 'GAME OVER') {
+  if(compObj.receiveAttack(x, y) === 'GAME OVER') {
     state = 'WIN'
   }
-  
-  renderBoard(player, playerObj, state)
+
+  if(userObj.AiAttack() === 'GAME OVER') {
+    state = 'LOSE'
+  }
+
+  let compState = state;
+  if(compState != 'playing') {
+    compState = compState === 'WIN' ? 'LOSE' : 'WIN'
+  }
+  renderBoard(player, compObj, userObj, compState)
+  renderBoard('user', userObj, compObj, state)
 }
 
 const reset = () => {
