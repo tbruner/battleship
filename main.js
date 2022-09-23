@@ -211,14 +211,21 @@ const renderBoard = (player, playerObj, oppObj, state) => {
   const board = document.getElementById(player)
   // clear board
   board.innerHTML = ''
-  const playerGB = playerObj.getGameBoard()
-  const playerBoard = playerGB.getBoard()
+  let playerBoard = null
+  if(playerObj === null || state === 'NOT PLAYING') {
+    playerBoard = [...Array(10)].map(e => Array(10))
+  }
+  else {
+    const playerGB = playerObj.getGameBoard()
+    playerBoard = playerGB.getBoard()
+  }
 
   let table = document.createElement('table')
   let tbody = document.createElement('tbody')
   let title = document.createElement('h2')
 
   let message = player
+
   if(state === 'WIN' || state === 'LOSE') message = state
   title.innerText = message
 
@@ -240,7 +247,7 @@ const renderBoard = (player, playerObj, oppObj, state) => {
       }
       else if(typeof playerBoard[i][j] === 'object' && playerBoard[i][j] != null) {
         // currently using same name used for html id, maybe add cpu flag in gameboard/player functions to use?
-        if(player === 'computer' && state === 'playing') {
+        if(player === 'computer' && state === 'PLAYING') {
           cell.classList.add('unchecked')
           cell.addEventListener('click', function() { attack(i, j, playerObj, oppObj, player) })
         } 
@@ -249,7 +256,7 @@ const renderBoard = (player, playerObj, oppObj, state) => {
         }
       }
       else {
-        if(player === 'computer' && state === 'playing') {
+        if(player === 'computer' && state === 'PLAYING') {
           cell.classList.add('unchecked')
           cell.addEventListener('click', function() { attack(i, j, playerObj, oppObj, player) })
         }
@@ -307,8 +314,8 @@ const newGame = () => {
   computerBoard.placeShip(8, 4, false, 1)
   computerBoard.placeShip(8, 8, true, 2)
 
-  renderBoard('user', user, computer, 'playing')
-  renderBoard('computer', computer, user, 'playing')
+  renderBoard('user', user, computer, 'PLAYING')
+  renderBoard('computer', computer, user, 'PLAYING')
   
   // Use event listener to get valid user input and run computer turn
   // using a timeout checking each time for a 'GAME OVER' where a 
@@ -317,7 +324,7 @@ const newGame = () => {
 }
 
 const attack = (x, y, compObj, userObj, player) => {
-  let state = 'playing'
+  let state = 'PLAYING'
   if(compObj.receiveAttack(x, y) === 'GAME OVER') {
     state = 'WIN'
   }
@@ -327,7 +334,7 @@ const attack = (x, y, compObj, userObj, player) => {
   }
 
   let compState = state;
-  if(compState != 'playing') {
+  if(compState != 'PLAYING') {
     compState = compState === 'WIN' ? 'LOSE' : 'WIN'
   }
   renderBoard(player, compObj, userObj, compState)
@@ -335,10 +342,18 @@ const attack = (x, y, compObj, userObj, player) => {
 }
 
 const reset = () => {
-  // clear display and show start screen
-  // display start button that calls newGame()
+  renderBoard('user', null, null, 'NOT PLAYING')
+  renderBoard('computer', null, null, 'NOT PLAYING')
+  const body = document.getElementsByTagName('body')
+  const startBtn = document.createElement('button')
+  startBtn.classList.add('start-btn')
+  startBtn.innerText = 'START'
+  startBtn.addEventListener('click', function() { newGame() })
+
+  body[0].appendChild(startBtn)
 }
-newGame()
+
+reset()
 })();
 
 /******/ })()
