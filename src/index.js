@@ -85,6 +85,10 @@ const newGame = () => {
   let userBoard = user.getGameBoard()
   let computerBoard = computer.getGameBoard()
 
+  const startBtn = document.getElementById('start-btn')
+
+  startBtn.innerText = 'RESTART'
+
   // manually place ships; to be later replaced with user input ship placement
   userBoard.placeShip(0, 2, false, 3)
   userBoard.placeShip(1, 6, false, 4)
@@ -133,18 +137,22 @@ const attack = (x, y, compObj, userObj, player) => {
   }
   renderBoard(player, compObj, userObj, compState)
   renderBoard('user', userObj, compObj, state)
+
+  if(compState != 'PLAYING') reset(true)
 }
 
-const reset = () => {
-  renderBoard('user', null, null, 'NOT PLAYING')
-  renderBoard('computer', null, null, 'NOT PLAYING')
-  const body = document.getElementsByTagName('body')
-  const startBtn = document.createElement('button')
-  startBtn.classList.add('start-btn')
-  startBtn.innerText = 'START'
+const reset = (played) => {
+  if(!played) {
+    renderBoard('user', null, null, 'NOT PLAYING')
+    renderBoard('computer', null, null, 'NOT PLAYING')
+  }
+
+  const startBtn = document.getElementById('start-btn')
+
+  if(played) startBtn.innerText = 'PLAY AGAIN'
+  else startBtn.innerText = 'START'
+
   startBtn.addEventListener('click', function() { newGame() })
-
-  body[0].appendChild(startBtn)
 }
 
-reset()
+reset(false)
