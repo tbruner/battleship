@@ -1,17 +1,35 @@
 import { player } from './Player.js';
 
+// global user and computer player objects
+let user
+let computer
+let played
+
 const renderBoard = (player, playerObj, oppObj, state) => {
   // get Gameboard to render to screen
   const board = document.getElementById(player)
   // clear board
   board.innerHTML = ''
   let playerBoard = null
+  let playerGB = null
   if(playerObj === null || state === 'NOT PLAYING') {
     playerBoard = [...Array(10)].map(e => Array(10))
   }
   else {
-    const playerGB = playerObj.getGameBoard()
+    playerGB = playerObj.getGameBoard()
     playerBoard = playerGB.getBoard()
+  }
+
+  const startBtn = document.getElementById('start-btn')
+
+  if(state === 'GAME READY') {
+    startBtn.classList.remove('inactive')
+    startBtn.removeEventListener('click', placeShips)
+    startBtn.addEventListener('click', newGame)
+  }
+
+  if(state === 'WIN' || state === 'LOSE') {
+    startBtn.innerText = 'PLAY AGAIN'
   }
 
   let table = document.createElement('table')
@@ -20,7 +38,12 @@ const renderBoard = (player, playerObj, oppObj, state) => {
 
   let message = player
 
-  if(state === 'WIN' || state === 'LOSE') message = state
+  if(state === 'WIN' || state === 'LOSE') {
+    message = state
+  }
+  else if(state === 'PLACE SHIPS' && player === 'user') {
+    message = state
+  }
   title.innerText = message
 
   let size = playerBoard.length
@@ -43,7 +66,7 @@ const renderBoard = (player, playerObj, oppObj, state) => {
         // currently using same name used for html id, maybe add cpu flag in gameboard/player functions to use?
         if(player === 'computer' && state === 'PLAYING') {
           cell.classList.add('unchecked')
-          cell.addEventListener('click', function() { attack(i, j, playerObj, oppObj, player) })
+          cell.addEventListener('click', () => { attack(i, j, playerObj, oppObj, player) })
         } 
         else {
           cell.classList.add('ship-cell')
@@ -52,7 +75,19 @@ const renderBoard = (player, playerObj, oppObj, state) => {
       else {
         if(player === 'computer' && state === 'PLAYING') {
           cell.classList.add('unchecked')
-          cell.addEventListener('click', function() { attack(i, j, playerObj, oppObj, player) })
+          cell.addEventListener('click', () => { attack(i, j, playerObj, oppObj, player) })
+        }
+        else if(player === 'user' && state === 'PLACE SHIPS') {
+          cell.addEventListener('click', () => {
+            playerGB.placeShip(i, j)
+            
+            if(playerGB.allShipsPlaced()) {
+              renderBoard('user', playerObj, oppObj, 'GAME READY')
+            }
+            else {
+              renderBoard('user', playerObj, oppObj, state)
+            }
+          })
         }
       }
 
@@ -78,47 +113,14 @@ const renderBoard = (player, playerObj, oppObj, state) => {
 }
 
 const newGame = () => {
-  // create user player and computer player objects
-  let user = player()
-  let computer = player()
-
-  let userBoard = user.getGameBoard()
-  let computerBoard = computer.getGameBoard()
-
   const startBtn = document.getElementById('start-btn')
 
   startBtn.innerText = 'RESTART'
-
-  // manually place ships; to be later replaced with user input ship placement
-  userBoard.placeShip(0, 2, false, 3)
-  userBoard.placeShip(1, 6, false, 4)
-  userBoard.placeShip(2, 0, false, 2)
-  userBoard.placeShip(3, 7, true, 2)
-  userBoard.placeShip(4, 5, false, 1)
-  userBoard.placeShip(5, 0, false, 1)
-  userBoard.placeShip(6, 7, false, 3)
-  userBoard.placeShip(8, 1, false, 1)
-  userBoard.placeShip(8, 4, false, 1)
-  userBoard.placeShip(8, 8, true, 2)
-
-  computerBoard.placeShip(0, 2, false, 3)
-  computerBoard.placeShip(1, 6, false, 4)
-  computerBoard.placeShip(2, 0, false, 2)
-  computerBoard.placeShip(3, 7, true, 2)
-  computerBoard.placeShip(4, 5, false, 1)
-  computerBoard.placeShip(5, 0, false, 1)
-  computerBoard.placeShip(6, 7, false, 3)
-  computerBoard.placeShip(8, 1, false, 1)
-  computerBoard.placeShip(8, 4, false, 1)
-  computerBoard.placeShip(8, 8, true, 2)
+  startBtn.removeEventListener('click', newGame)
+  startBtn.addEventListener('click', reset)
 
   renderBoard('user', user, computer, 'PLAYING')
   renderBoard('computer', computer, user, 'PLAYING')
-  
-  // Use event listener to get valid user input and run computer turn
-  // using a timeout checking each time for a 'GAME OVER' where a 
-  // game over screen will display and following a timeout clear and
-  // display start screen
 }
 
 const attack = (x, y, compObj, userObj, player) => {
@@ -138,21 +140,50 @@ const attack = (x, y, compObj, userObj, player) => {
   renderBoard(player, compObj, userObj, compState)
   renderBoard('user', userObj, compObj, state)
 
-  if(compState != 'PLAYING') reset(true)
+  if(compState != 'PLAYING') {
+    played = true
+  }
 }
 
-const reset = (played) => {
+const reset = () => {
   if(!played) {
     renderBoard('user', null, null, 'NOT PLAYING')
     renderBoard('computer', null, null, 'NOT PLAYING')
   }
 
+  // create user player and computer player objects
+  user = player()
+  computer = player()
+
   const startBtn = document.getElementById('start-btn')
 
-  if(played) startBtn.innerText = 'PLAY AGAIN'
-  else startBtn.innerText = 'START'
+  startBtn.innerText = 'PLACE SHIPS'
 
-  startBtn.addEventListener('click', function() { newGame() })
+  startBtn.removeEventListener('click', reset)
+  // Add condition to deactivate startBtn until all ships are placed
+  startBtn.addEventListener('click', placeShips)
 }
 
-reset(false)
+const placeShips = () => {
+  let userBoard = user.getGameBoard()
+
+  window.removeEventListener('keyup', userBoard.changeShipLength)
+  window.removeEventListener('keyup', userBoard.toggleOrientation)
+
+  window.addEventListener('keyup', userBoard.changeShipLength)
+  window.addEventListener('keyup', userBoard.toggleOrientation)
+
+  renderBoard('user', user, computer, 'PLACE SHIPS')
+  renderBoard('computer', computer, user, 'PLACE SHIPS')
+
+  const startBtn = document.getElementById('start-btn')
+
+  startBtn.innerText = 'PLAY GAME'
+
+  startBtn.classList.add('inactive')
+
+  // Remove place ships event  listener
+  startBtn.removeEventListener('click', placeShips)
+}
+
+reset()
