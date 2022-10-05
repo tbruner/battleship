@@ -8,17 +8,55 @@ const Gameboard = (size) => {
   // initialize empty array if ships to keep track of how many ships are left
   const ships = [];
 
+  let orientation = true
+  let shipLengths = [[1,4],[2,3],[3,2],[4,1]]
+  let shipIndex = 3
+
   const getBoard = () => {
     return board
   }
 
-  const placeShip = (x, y, orient, length) => {
-    let playerShip = ship(length);
-    ships.push(playerShip);
-    for(let i=0; i<playerShip.getLength(); i++) {
-      if(orient) board[x+i][y] = [playerShip, i];
-      else board[x][y+i] = [playerShip, i];
+  const placeShip = (x, y) => {
+    if(shipLengths[shipIndex][1]){
+      let playerShip = ship(shipLengths[shipIndex][0]);
+      ships.push(playerShip);
+      for(let i=0; i<playerShip.getLength(); i++) {
+        if(orientation && x+i < 10) {
+          board[x+i][y] = [playerShip, i];
+        }
+        else if(!orientation && y+i < 10) {
+          board[x][y+i] = [playerShip, i];
+        }
+      }
+      shipLengths[shipIndex][1]--
+      let cycle = 4
+      while(shipLengths[shipIndex][1] === 0 && cycle) {
+        if(shipIndex === 3) {
+          shipIndex = 0
+        }
+        else ++shipIndex
+        --cycle
+      }
     }
+  }
+
+  const changeShipLength = (e) => {
+    if(e.key === 'Shift') {
+      let cycle = 4
+      let invalid = true
+      while(invalid && cycle){
+        if(shipIndex === 3) {
+          shipIndex = 0
+        }
+        else ++shipIndex
+        if(shipLengths[shipIndex][0] != 0) invalid = false
+        --cycle
+      }
+    }
+  } 
+
+  const toggleOrientation = (e) => {
+    if(e.key === ' ') orientation = orientation ? false : true
   }
 
   const receiveAttack = (x,y) => {
@@ -52,7 +90,18 @@ const Gameboard = (size) => {
     return 'GAME OVER';
   }
 
-  return { getBoard, placeShip, receiveAttack }
+  const allShipsPlaced = () => {
+    let empty = true
+    for(let i=0; i<4; ++i) {
+      if(shipLengths[i][1] != 0) {
+        empty = false
+        break
+      }
+    }
+    return empty
+  }
+
+  return { getBoard, placeShip, receiveAttack, changeShipLength, toggleOrientation, allShipsPlaced }
 }
 
 export { Gameboard };
